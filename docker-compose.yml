@@ -1,0 +1,104 @@
+version: '3.4'
+
+services:
+  inventoryservice:
+    image: ${DOCKER_REGISTRY-}inventoryservice
+    build:
+      context: .
+      dockerfile: Microservices/InventoryService/Dockerfile
+    #container_name: InventoryService
+    environment:
+      - RABBITMQ_HOST
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    depends_on:
+      - fluentd
+      - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+
+  shippingservice:
+    image: ${DOCKER_REGISTRY-}shippingservice
+    #container_name: ShippingService
+    build:
+      context: .
+      dockerfile: Microservices/ShippingService/Dockerfile
+    environment:
+      - RABBITMQ_HOST
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    depends_on:
+      - fluentd
+      - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+
+  bankservice:
+    image: ${DOCKER_REGISTRY-}bankservice
+    #container_name: BankService
+    build:
+      context: .
+      dockerfile: Microservices/BankService/Dockerfile
+    environment:
+      - RABBITMQ_HOST
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    depends_on:
+      - fluentd
+      - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+    
+  logprocessor:
+    image: ${DOCKER_REGISTRY-}logprocessor
+    #container_name: LogProcessor
+    build:
+      context: .
+      dockerfile: LogProcessor/LogProcessor/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "5000:80"
+      #- "44398:443"
+    
+  buyergateway.server:
+    image: ${DOCKER_REGISTRY-}buyergatewayserver
+    #container_name: BuyerGateway
+    build:
+      context: .
+      dockerfile: Gateway/BuyerGateway/Server/Dockerfile
+    environment:
+      - RABBITMQ_HOST
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    depends_on:
+      - fluentd
+      - rabbitmq
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+
+  ui.server:
+    image: ${DOCKER_REGISTRY-}uiserver
+    build:
+      context: .
+      dockerfile: LogProcessor/UI/Server/Dockerfile
+    ports:
+      - "5002:80"
+    depends_on:
+      - logprocessor
+    #environment:
+    #  - RemoteLogprocessorUrl=http://logprocessor
+networks:
+  default:
+    external:
+      name: thesis_network  
+
+

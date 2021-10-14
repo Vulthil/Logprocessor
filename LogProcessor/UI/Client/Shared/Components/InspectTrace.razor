@@ -1,0 +1,17 @@
+﻿@using Microsoft.Extensions.Options
+<Button Float="Float" Type="ButtonType.Link"
+        To="@InspectTraceUrl" Target="Target.Blank">
+    <Icon Name="IconName.Search">Inspect</Icon>
+</Button>
+
+@code {
+    [Parameter]
+    public string SessionId { get; set; }
+
+    [Parameter]
+    public Float Float { get; set; } = Float.Right;
+    [Inject] private IOptions<PersistentStorageQueryConfiguration> QueryConfigurationOptions { get; set; }
+    
+
+    public string InspectTraceUrl => QueryConfigurationOptions.Value.GenerateUrl(SessionId);
+}

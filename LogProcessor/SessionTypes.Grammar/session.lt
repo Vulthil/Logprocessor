@@ -1,0 +1,19 @@
+﻿
+BuyerGateway.Server: BuyerGateway.Client?PlaceOrder.InventoryService!GetSKUDetails.InventoryService?SKUDetails.BuyerGateway.Client!PlaceOrder.
+	µ(Order). BuyerGateway.Client &{ 
+	CancelOrder.BuyerGateway.Client!CancelOrder.end, 
+	ConfirmOrder.BankService!VerifyCC.BankService &{ 
+		InvalidCC.BuyerGateway.Client!ConfirmOrder.Order,											   
+		ValidCC.BankService!MakeCharge.InventoryService!MakeOrder.BuyerGateway.Client!ConfirmOrder.end
+		}
+	}
+InventoryService: BuyerGateway.Server &{
+	GetSKUDetails.BuyerGateway.Server!SKUDetails.end,
+	MakeOrder.ShippingService!ShipOrder.end
+	}
+ShippingService: InventoryService?ShipOrder.end
+BankService: BuyerGateway.Server?VerifyCC.BuyerGateway.Server @{
+	InvalidCC.end,
+	ValidCC.BuyerGateway.Server?MakeCharge.RealBank!RealBankMakeCharge.end
+	}
+

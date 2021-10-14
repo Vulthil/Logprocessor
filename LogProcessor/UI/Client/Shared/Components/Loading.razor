@@ -1,0 +1,16 @@
+﻿@using FIcon = Blazorise.Icons.FontAwesome.FontAwesomeIcons;
+
+<Paragraph Italic="@Italic" Alignment="@Alignment">
+    <Icon Name="FIcon.Spinner" Class="fa-spin" />
+    @ChildContent
+</Paragraph>
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = @<div>Loading...</div>;
+
+    public bool Italic { get; set; } = true;
+
+    public TextAlignment Alignment { get; set; } = TextAlignment.Center;
+
+}

@@ -1,0 +1,136 @@
+﻿@page "/faulted"
+@using UI.Client.Generated
+@using System.Diagnostics
+<Row>
+    <Column ColumnSize="ColumnSize.Is10" Float="Float.Left">
+        <Heading Size="HeadingSize.Is1">
+            Faulted Session
+        </Heading>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is2">
+        <Button Type="ButtonType.Button" Color="Color.Primary" Float="Float.Right"
+                Clicked="Refresh">
+            <Icon Name="IconName.Sync">Refresh</Icon>
+        </Button>
+    </Column>
+</Row>
+
+<Modal @ref="_modalRef">
+    @if (chosenSessionDto != null)
+    {
+    <ModalContent IsCentered="true" Size="ModalSize.Large">
+        <ModalHeader Class="modal-header-fancy">
+            <ModalTitle>@chosenSessionDto.SessionId</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <CardDeck>
+                <Card>
+                    <CardHeader>Error message</CardHeader>
+                    <CardBody>@chosenSessionDto.ViolatingMessage.LogMessage.ErrorMessage</CardBody>
+                </Card>
+            </CardDeck>
+            @foreach (var group in chosenSessionDto.ViolatingMessage.PoisonedMessages.OrderBy(m => m.LogMessage.Message.Time).GroupBy(m => m.LogMessage.Message.Originator))
+            {
+                <CardDeck Margin="Margin.Is2.FromTop">
+
+                    <Card>
+                        <CardHeader>Logged by @group.Key after violating message</CardHeader>
+                        <CardBody>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHeaderCell>Sender</TableHeaderCell>
+                                        <TableHeaderCell>Recipient</TableHeaderCell>
+                                        <TableHeaderCell>Message</TableHeaderCell>
+                                        <TableHeaderCell>Timestamp</TableHeaderCell>
+                                    </TableRow>
+                                </TableHeader>
+                                @foreach (var (message, idx) in group.Select((message, idx) => (message, idx)))
+                                {
+                                    <TableRow>
+                                        <TableRowCell>@message.LogMessage.Message.Origin</TableRowCell>
+                                        <TableRowCell>@message.LogMessage.Message.Destination</TableRowCell>
+                                        <TableRowCell>@message.LogMessage.Message.TargetApi</TableRowCell>
+                                        <TableRowCell>@message.LogMessage.Message.Time.DateTime.ToString("yy-MM-dd HH:mm:ss.fff")</TableRowCell>
+                                    </TableRow>
+                                }
+                            </Table>
+                        </CardBody>
+                    </Card>
+                </CardDeck>
+            }
+        </ModalBody>
+
+        <ModalFooter>
+            <InspectTrace SessionId="@chosenSessionDto.SessionId"></InspectTrace>
+        </ModalFooter>
+    </ModalContent>
+
+    }
+</Modal>
+<Table Hoverable="true" >
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>@nameof(FaultedSessionDto.SessionId)</TableHeaderCell>
+            <TableHeaderCell>Service</TableHeaderCell>
+            <TableHeaderCell>@nameof(FaultedSessionDto.ViolatingMessage)</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @if (!ServerStatus.IsOnline)
+        {
+    <TableRow>
+        <TableRowCell ColumnSpan="3">
+            <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                No connection to the server could be made.<br />
+                Try refreshing on the button in the top right.
+            </Paragraph>
+        </TableRowCell>
+    </TableRow> }
+                        else if (totalRows == null)
+                        {
+    <TableRow>
+        <TableRowCell ColumnSpan="3">
+            <Loading />
+        </TableRowCell>
+    </TableRow> }
+                        else if (totalRows == 0)
+                        {
+                            <TableRow>
+                                <TableRowCell ColumnSpan="3">
+                                    <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                                        There are no faulted sessions.
+                                    </Paragraph>
+                                </TableRowCell>
+                            </TableRow> }
+else
+{
+    @foreach (var session in faultedSessions)
+    {
+    <TableRow Clicked="_ => RowClicked(session)" HoverCursor="Cursor.Pointer">
+        <TableRowHeader>@session.SessionId</TableRowHeader>
+        <TableRowCell>@session.ViolatingMessage.LogMessage.Message.Originator</TableRowCell>
+        <TableRowCell>@session.ViolatingMessage.LogMessage.ErrorMessage</TableRowCell>
+    </TableRow>}}
+    </TableBody>
+    <TableFooter Float="Float.Left">
+        @if (totalRows is not null)
+        {
+            @*<div>*@
+            <BlazorPager CurrentPage="@currentPage"
+                     PageCount="@((totalRows.Value + perPage - 1) / perPage)"
+                     OnPageChanged="(async e => await ChangePage(e))"
+                     ShowFirstLast="true"
+                     ShowPageNumbers="true"
+                     VisiblePages="5"
+                     NextText="›"
+                     PreviousText="‹"
+                     FirstText="«"
+        
+                     LastText="»" />
+            @*</div>*@
+        }
+    </TableFooter>
+</Table>
+

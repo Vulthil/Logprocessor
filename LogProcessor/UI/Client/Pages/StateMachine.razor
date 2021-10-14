@@ -1,0 +1,33 @@
+﻿@page "/state-machine"
+
+<h3>StateMachine</h3>
+
+<Row>
+    <Field ColumnSize="ColumnSize.Is12">
+        <Validation Validator="Validator">
+            <FieldLabel>Type State machine here</FieldLabel>
+            <MemoEdit @bind-Text="@InputText" Rows="10"></MemoEdit>
+        </Validation>
+    </Field>
+</Row>
+
+@_stateMachine
+
+
+@code {
+    [Inject] protected IJSRuntime JSRuntime { get; set; }
+
+    private string InputText { get; set; } = "";
+
+    private MarkupString _stateMachine = new MarkupString("");
+    
+
+    private async void Validator(ValidatorEventArgs obj)
+    {
+        var text = Convert.ToString(obj.Value);
+        var s = await JSRuntime.InvokeAsync<string>("StateMachine.renderToString", text);
+        _stateMachine = new MarkupString(s);
+        StateHasChanged();
+    }
+
+}

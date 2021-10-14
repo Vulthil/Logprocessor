@@ -1,0 +1,44 @@
+﻿<Card>
+    <CardHeader>
+        @HeaderText
+    </CardHeader>
+    <CardBody>
+        @if (Messages.Any(x => x.Count > 0))
+        {
+            <Table Narrow="true">
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell>
+                            Name of message
+                        </TableHeaderCell>
+                        <TableHeaderCell>
+                            Count
+                        </TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var entry in Messages.Where(x => x.Count > 0))
+                    {
+                        <TableRow>
+                            <TableRowCell>@entry.Label</TableRowCell>
+                            <TableRowCell>@entry.Count</TableRowCell>
+                        </TableRow>
+                    }
+                </TableBody>
+            </Table> }
+        else
+        {
+            <p><i style="color:lightslategrey">@EmptyText</i></p>
+        }
+    </CardBody>
+</Card>
+@code {
+    [Parameter]
+    public ICollection<LabelAndCountDto> Messages { get; set; }
+
+    [Parameter]
+    public string HeaderText { get; set; }
+
+    [Parameter]
+    public string EmptyText { get; set; }
+}

@@ -1,0 +1,875 @@
+{
+  "x-generator": "NSwag v13.11.1.0 (NJsonSchema v10.4.3.0 (Newtonsoft.Json v12.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "My Title",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/Grammar": {
+      "post": {
+        "tags": [
+          "Grammar"
+        ],
+        "operationId": "Grammar_UploadText",
+        "requestBody": {
+          "x-name": "model",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrammarTextModelDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Grammar"
+        ],
+        "operationId": "Grammar_GetSessionTypes",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Grammar/{id}": {
+      "delete": {
+        "tags": [
+          "Grammar"
+        ],
+        "operationId": "Grammar_RemoveSessionType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Grammar"
+        ],
+        "operationId": "Grammar_ChangeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Log": {
+      "get": {
+        "tags": [
+          "Log"
+        ],
+        "operationId": "Log_StartUp",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Log"
+        ],
+        "operationId": "Log_PostBulkLogMessages",
+        "requestBody": {
+          "x-name": "messages",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LogMessage"
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Session/tracked": {
+      "get": {
+        "tags": [
+          "Session"
+        ],
+        "operationId": "Session_GetTrackedSessions",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableRequestResponseOfTrackedSessionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Session/faulted": {
+      "get": {
+        "tags": [
+          "Session"
+        ],
+        "operationId": "Session_GetFaultedSessions",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableRequestResponseOfFaultedSessionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Session/awaiting": {
+      "get": {
+        "tags": [
+          "Session"
+        ],
+        "operationId": "Session_GetAwaitingSessions",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableRequestResponseOfAwaitingSessionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Session/evict/{sessionId}": {
+      "post": {
+        "tags": [
+          "Session"
+        ],
+        "operationId": "Session_EvictSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "withError",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Session/evict": {
+      "post": {
+        "tags": [
+          "Session"
+        ],
+        "operationId": "Session_EvictSessions",
+        "parameters": [
+          {
+            "name": "withError",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "sessionIds",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Session/testCache": {
+      "get": {
+        "tags": [
+          "Session"
+        ],
+        "operationId": "Session_TestCache",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WeatherForecast": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "WeatherForecast_Get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecast"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ResultDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GrammarTextModelDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sessionTypeName",
+          "inputText"
+        ],
+        "properties": {
+          "sessionTypeName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "inputText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "externalParticipants": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SessionType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "shouldLoad": {
+            "type": "boolean"
+          },
+          "internalParticipants": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "externalParticipants": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LogMessage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "destination": {
+            "type": "string",
+            "nullable": true
+          },
+          "targetApi": {
+            "type": "string",
+            "nullable": true
+          },
+          "sessionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "direction": {
+            "$ref": "#/components/schemas/Direction"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isOutbound": {
+            "type": "boolean"
+          },
+          "isInbound": {
+            "type": "boolean"
+          },
+          "originator": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Direction": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Inbound",
+          "Outbound"
+        ],
+        "enum": [
+          0,
+          1
+        ]
+      },
+      "TableRequestResponseOfTrackedSessionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "rows": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/TrackedSessionDto"
+            }
+          },
+          "totalRows": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TrackedSessionDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SessionDto"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "$ref": "#/components/schemas/SessionStatus"
+              },
+              "state": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SessionStateDto"
+                  }
+                ]
+              },
+              "transitions": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/ServiceTransitionDto"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SessionStatus": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Live"
+        ],
+        "enum": [
+          0
+        ]
+      },
+      "SessionStateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sent": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/LabelAndCountDto"
+            }
+          },
+          "received": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/LabelAndCountDto"
+            }
+          }
+        }
+      },
+      "LabelAndCountDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ServiceTransitionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "transitionLabels": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SessionDto": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "TableRequestResponseOfFaultedSessionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "rows": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/FaultedSessionDto"
+            }
+          },
+          "totalRows": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "FaultedSessionDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SessionDto"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "violatingMessage": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ViolatingMessage"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ViolatingMessage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logMessageId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logMessage": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LogMessageEntity"
+              }
+            ]
+          },
+          "poisonedMessages": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/PoisonedMessage"
+            }
+          }
+        }
+      },
+      "LogMessageEntity": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LogMessage"
+              }
+            ]
+          }
+        }
+      },
+      "PoisonedMessage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logMessageId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logMessage": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LogMessageEntity"
+              }
+            ]
+          },
+          "violatingMessageId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "violatingMessage": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ViolatingMessage"
+              }
+            ]
+          }
+        }
+      },
+      "TableRequestResponseOfAwaitingSessionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "rows": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AwaitingSessionDto"
+            }
+          },
+          "totalRows": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AwaitingSessionDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TrackedSessionDto"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "lastModified": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "WeatherForecast": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "temperatureC": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "temperatureF": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}

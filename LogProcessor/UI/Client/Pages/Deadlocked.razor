@@ -1,0 +1,149 @@
+﻿@page "/deadlocked"
+@using UI.Client.Generated
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is10" Float="Float.Left">
+        <Heading Size="HeadingSize.Is1">
+            Possibly Deadlocked Sessions
+        </Heading>
+    </Column>
+    @*<Column ColumnSize="ColumnSize.Is2">
+        <Button Type="ButtonType.Button" Color="Color.Primary" Float="Float.Right"
+                Clicked="Refresh">
+            <Icon Name="IconName.Sync">Refresh</Icon>
+        </Button>
+    </Column>*@
+</Row>
+<Modal @ref="_modalRef">
+    @if (chosenSessionDto != null)
+    {
+        <ModalContent IsCentered="true" Size="ModalSize.Large">
+            <ModalHeader Class="modal-header-fancy">
+                <ModalTitle>@chosenSessionDto.SessionId</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <SessionStateDeck State="chosenSessionDto.State"></SessionStateDeck>
+                <CardDeck Margin="Margin.Is2.FromTop">
+                    <Card>
+                        <CardHeader>Services</CardHeader>
+                        <CardBody>
+                            @foreach (var t in chosenSessionDto.Transitions)
+                            {
+                                <div>
+                                    <p><b>@t.ServiceId</b> is waiting for messages: @t.TransitionLabels.Aggregate((a, b) => a + " OR " + b)</p>
+                                </div>
+                            }
+                        </CardBody>
+                    </Card>
+                </CardDeck>
+            </ModalBody>
+            <ModalFooter>
+                <InspectTrace SessionId="@chosenSessionDto.SessionId"></InspectTrace>
+            </ModalFooter>
+        </ModalContent>
+    }
+</Modal>
+
+
+<Table Hoverable="true">
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>@nameof(TrackedSessionDto.SessionId)</TableHeaderCell>
+            <TableHeaderCell>@nameof(TrackedSessionDto.Status)</TableHeaderCell>
+            <TableHeaderCell></TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @if (!ServerStatus.IsOnline)
+        {
+    <TableRow>
+        <TableRowCell ColumnSpan="3">
+            <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                No connection to the server could be made.<br />
+                Try again.
+            </Paragraph>
+        </TableRowCell>
+    </TableRow> }
+                        else if (_loading)
+                        {
+    <TableRow>
+        <TableRowCell ColumnSpan="3">
+            <Loading />
+        </TableRowCell>
+    </TableRow> }
+                        else if (_possibleDeadlocked is null)
+                        {
+    <TableRow>
+        <TableRowCell ColumnSpan="3">
+            <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                Choose a threshold and perform a query.
+            </Paragraph>
+        </TableRowCell>
+    </TableRow> }
+else if (!_possibleDeadlocked.Any())
+{
+    <TableRow>
+        <TableRowCell ColumnSpan="3">
+            <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                There are no possibly deadlocked sessions.
+            </Paragraph>
+        </TableRowCell>
+    </TableRow>
+}
+                        else
+                        {
+    @foreach (var session in pagedSessions)
+    {
+    <TableRow @onclick="@((e) => RowClicked(session))" HoverCursor="Cursor.Pointer">
+        <TableRowHeader>@session.SessionId</TableRowHeader>
+        <TableRowCell>Possibly deadlocked</TableRowCell>
+        <TableRowCell>
+            <Dropdown @onclick:stopPropagation="true">
+                <DropdownToggle Color="Color.Danger">
+                    Evict
+                </DropdownToggle>
+                <DropdownMenu>
+                    <DropdownItem Clicked="async e => await EvictSession(session, false)">Simple</DropdownItem>
+                    <DropdownDivider />
+                    <DropdownItem Clicked="async e => await EvictSession(session)">Save as faulted</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+        </TableRowCell>
+    </TableRow>}}
+    </TableBody>
+    <TableFooter Float="Float.Left">
+        @if (_possibleDeadlocked is not null)
+        {
+            <BlazorPager CurrentPage="@currentPage"
+                         PageCount="@((totalRows + perPage - 1) / perPage)"
+                         OnPageChanged="async e => await ChangePage(e)"
+                         ShowFirstLast="true"
+                         ShowPageNumbers="true"
+                         VisiblePages="5"
+                         NextText="›"
+                         PreviousText="‹"
+                         FirstText="«"
+                         LastText="»" />}
+    </TableFooter>
+</Table>
+
+<Row Margin="Margin.Is1.FromBottom">
+    <Column ColumnSize="ColumnSize.Is1">
+        <Check TValue="bool" @bind-Checked="_onlyBalanced">Only balanced sessions</Check>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is1">
+        <NumericEdit @bind-Value="_delay"></NumericEdit>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is1">
+        <Button Type="ButtonType.Button" Color="Color.Info" Clicked="() => Query(false)">Query</Button>
+    </Column>
+    @if (_possibleDeadlocked != null)
+    {
+        <Column ColumnSize="ColumnSize.Is2">
+            <Button Type="ButtonType.Button" Color="Color.Primary" Clicked="() => Query(true)">Restrict query</Button>
+        </Column>
+    }
+</Row>
+
+

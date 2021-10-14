@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Automata</name>
+    </assembly>
+    <members>
+        <member name="T:Automata.Automaton.AutomatonDefinition`2">
+            <summary>
+            An <see cref="T:Automata.Automaton.AutomatonDefinition`2"/> for
+            </summary>
+            <typeparam name="TState">The identifier type for states.</typeparam>
+            <typeparam name="TTransition">The identifier type for transitions.</typeparam>
+        </member>
+        <member name="M:Automata.Automaton.AutomatonDefinition`2.Create(System.Collections.Generic.IEnumerable{System.ValueTuple{`0,`1,`0}})">
+            <summary>
+            Creates an <see cref="T:Automata.Automaton.AutomatonDefinition`2"/> given a list of valid transitions.
+            </summary>
+            <param name="definition">List of <see cref="T:System.ValueTuple`3"/> which are valid in the automaton.</param>
+            <returns>A new <see cref="T:Automata.Automaton.AutomatonDefinition`2"/> for the given <paramref name="definition"/>.</returns>
+        </member>
+        <member name="M:Automata.Automaton.AutomatonDefinition`2.MakeStatefulAutomaton(`0)">
+            <summary>
+            Make a new <see cref="T:Automata.Automaton.StatefulAutomaton`2"/> for the given start state.
+            </summary>
+            <param name="startState">The identifier of the starting state.</param>
+            <returns>A new <see cref="T:Automata.Automaton.StatefulAutomaton`2"/> with the current instance of <see cref="T:Automata.Interfaces.IAutomatonDefinition`2"/> as basis.</returns>
+        </member>
+        <member name="T:Automata.Automaton.StatefulAutomaton`2">
+            <summary>
+            A <see cref="T:Automata.Automaton.StatefulAutomaton`2"/> for
+            </summary>
+            <typeparam name="TState">The identifier type for states.</typeparam>
+            <typeparam name="TTransition">The identifier type for transitions.</typeparam>
+        </member>
+        <member name="M:Automata.Automaton.StatefulAutomaton`2.Move(`1)">
+            <summary>
+            Takes the given <paramref name="transitionId"/> in the current <see cref="P:Automata.Automaton.StatefulAutomaton`2.State"/> the <see cref="T:Automata.Automaton.StatefulAutomaton`2"/> is in.
+            </summary>
+            <param name="transitionId">The identifier of the transition to take.</param>
+        </member>
+        <member name="M:Automata.Interfaces.IAutomatonDefinition`2.MakeStatefulAutomaton(`0)">
+            <summary>
+            Make a new <see cref="T:Automata.Interfaces.IStatefulAutomaton`2"/> for the given start state.
+            </summary>
+            <param name="startState">The identifier of the starting state.</param>
+            <returns>A new <see cref="T:Automata.Interfaces.IStatefulAutomaton`2"/> with the current instance of <see cref="T:Automata.Interfaces.IAutomatonDefinition"/> as basis.</returns>
+        </member>
+        <member name="M:Automata.Interfaces.IAutomatonDefinition`2.StateTransitions(`0)">
+            <summary>
+            Retrieves the transitions exiting the configured start state.
+            </summary>
+            <returns>A list of transition labels</returns>
+        </member>
+        <member name="T:Automata.Interfaces.IAutomatonDefinition">
+            <summary>
+            An <see cref="T:Automata.Interfaces.IAutomatonDefinition"/> for instantiating <see cref="T:Automata.Interfaces.IAutomatonDefinition`2"/>
+            without redundant type definitions.
+            </summary>
+        </member>
+        <member name="M:Automata.Interfaces.IAutomatonDefinition.Create``2(Automata.Interfaces.IAutomatonConfiguration{``0,``1})">
+            <summary>
+            Creates an <see cref="T:Automata.Interfaces.IAutomatonDefinition`2"/> for the given configuration.
+            </summary>
+            <param name="configuration">The configuration defining the automaton.</param>
+            <returns>A new <see cref="T:Automata.Interfaces.IAutomatonDefinition`2"/>.</returns>
+        </member>
+        <member name="M:Automata.Interfaces.IStatefulAutomaton`2.Move(`1)">
+            <summary>
+            Takes the given <paramref name="transitionId"/> in the current <see cref="P:Automata.Automaton.StatefulAutomaton`2.State"/> the <see cref="T:Automata.Automaton.StatefulAutomaton`2"/> is in.
+            </summary>
+            <param name="transitionId">The identifier of the transition to take.</param>
+            <returns>The identifier of the new state.</returns>
+        </member>
+    </members>
+</doc>

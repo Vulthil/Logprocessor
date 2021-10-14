@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectVersion>2.1</ProjectVersion>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <ProjectGuid>c40b1d1c-50de-4b37-99f5-132d283a8101</ProjectGuid>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceName>buyergateway.server</DockerServiceName>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
+    <AdditionalComposeFilePaths>docker-compose.infrastructure.yml</AdditionalComposeFilePaths>
+    <DockerComposeProjectName>thesis</DockerComposeProjectName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".env.example" />
+    <None Include=".env" />
+    <None Include=".env" />
+    <None Include=".env" />
+    <None Include="BuildAll.sh" />
+    <None Include="docker-compose.infrastructure.yml" />
+    <None Include="docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.yml" />
+    <None Include=".dockerignore" />
+    <None Include="ReloadFluentd" />
+    <None Include="RunAll" />
+    <None Include="RunAll_Infra" />
+    <None Include="StopAll_Infra" />
+    <None Include="StopAll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fluentd\Dockerfile" />
+    <None Include="Fluentd\entrypoint.sh" />
+    <None Include="Fluentd\conf\fluent.conf" />
+  </ItemGroup>
+</Project>

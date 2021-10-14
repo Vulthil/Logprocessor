@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Blazorise.Bootstrap" Version="0.9.3.6" />
+		<PackageReference Include="Blazorise.Components" Version="0.9.3.6" />
+		<PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.3.6" />
+		<PackageReference Include="BlazorPagination" Version="0.2.15" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.6" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+		<PackageReference Include="NSwag.MSBuild" Version="13.11.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\SessionTypes.Grammar\SessionTypes.Grammar.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+	</ItemGroup>
+	<Target Name="NSwag" BeforeTargets="BeforeBuild" Condition="'$(DOTNET_WATCH)' == ''">
+		<Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Net50) run nswag.json /variables:Configuration=$(Configuration)" />
+	</Target>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(DOTNET_WATCH)' == ''">
+		<Exec Command="npm install" WorkingDirectory="NpmJS" />
+		<Exec Command="npm run build" WorkingDirectory="NpmJS" />
+	</Target>
+</Project>

@@ -1,0 +1,127 @@
+﻿@page "/tracked"
+@using UI.Client.Generated
+@using MoreLinq
+<Row>
+    <Column ColumnSize="ColumnSize.Is10" Float="Float.Left">
+        <Heading Size="HeadingSize.Is1">
+            Tracked Sessions
+        </Heading>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is2">
+        <Button Type="ButtonType.Button" Color="Color.Primary" Float="Float.Right"
+                Clicked="Refresh">
+            <Icon Name="IconName.Sync">Refresh</Icon>
+        </Button>
+    </Column>
+</Row>
+<Modal @ref="_modalRef">
+    @if (chosenSessionDto != null)
+    {
+        <ModalContent Centered="true" Size="ModalSize.Large">
+            <ModalHeader Class="modal-header-fancy">
+                <ModalTitle>@chosenSessionDto.SessionId</ModalTitle>
+                <CloseButton />
+            </ModalHeader>
+            <ModalBody>
+                <SessionStateDeck State="chosenSessionDto.State"></SessionStateDeck>
+                <CardDeck Margin="Margin.Is2.FromTop">
+                    <Card>
+                        <CardHeader>Services</CardHeader>
+                        <CardBody>
+                            @if (chosenSessionDto.Transitions.Any())
+                            {
+                                foreach (var t in chosenSessionDto.Transitions)
+                                {
+                                    <div>
+                                        <p><b>@t.ServiceId</b> is waiting for messages: @t.TransitionLabels.Aggregate((a, b) => a + " OR " + b)</p>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p style="color:lightslategray"><i>No active session participants</i></p>
+                            }
+                        </CardBody>
+                    </Card>
+                </CardDeck>
+            </ModalBody>
+            <ModalFooter>
+                <InspectTrace SessionId="@chosenSessionDto.SessionId"></InspectTrace>
+            </ModalFooter>
+        </ModalContent>
+    }
+</Modal>
+
+<Table Hoverable="true">
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>@nameof(TrackedSessionDto.SessionId)</TableHeaderCell>
+            <TableHeaderCell>@nameof(TrackedSessionDto.Status)</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @if (!ServerStatus.IsOnline)
+        {
+            <TableRow>
+                <TableRowCell ColumnSpan="2">
+                    <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                        No connection to the server could be made.<br />
+                        Try refreshing on the button in the top right.
+                    </Paragraph>
+                </TableRowCell>
+            </TableRow>
+        }
+        else if (_trackedSessions == null)
+        {
+            <TableRow>
+                <TableRowCell ColumnSpan="2">
+                    <Loading />
+                </TableRowCell>
+            </TableRow>
+        }
+        else if (!_trackedSessions.Any())
+        {
+            <TableRow>
+                <TableRowCell ColumnSpan="2">
+                    <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                        There are no tracked sessions.
+                    </Paragraph>
+                </TableRowCell>
+            </TableRow>
+        }
+        else
+        {
+            @foreach (var session in _trackedSessions)
+            {
+                <TableRow @onclick="@((e) => RowClicked(session))" HoverCursor="Cursor.Pointer">
+                    <TableRowHeader>@session.SessionId</TableRowHeader>
+                    <TableRowCell>
+                        @(session.Transitions.All(t => t.TransitionLabels.All(tt => tt.EndsWith("inbound", StringComparison.InvariantCultureIgnoreCase))) && session.State.Received.All(m => m.Count == 0) && session.State.Sent.All(m => m.Count == 0) ? "Possibly deadlocked" : session.Status)
+                        @*@if (session.Transitions.All(t => t.TransitionLabels.All(tt => tt.EndsWith("inbound", StringComparison.InvariantCultureIgnoreCase))))
+                        {
+                            <Tooltip Text="All participants are waiting for ingoing messages, session might be deadlocked.">
+                                <Icon Margin="Margin.Is2.FromLeft" Style="font-size: 1.25rem;" Name="IconName.ExclamationTriangle" IconStyle="IconStyle.Solid"></Icon>
+                            </Tooltip>
+                        }*@
+                    </TableRowCell>
+                </TableRow>
+            }
+        }
+    </TableBody>
+    <TableFooter Float="Float.Left">
+        @if (totalRows is not null)
+        {
+            <BlazorPager CurrentPage="@currentPage"
+                         PageCount="@((totalRows.Value + perPage - 1) / perPage)"
+                         OnPageChanged="(async e => await ChangePage(e))"
+                         ShowFirstLast="true"
+                         ShowPageNumbers="true"
+                         VisiblePages="5"
+                         NextText="›"
+                         PreviousText="‹"
+                         FirstText="«"
+                         LastText="»" />}
+    </TableFooter>
+</Table>
+
+

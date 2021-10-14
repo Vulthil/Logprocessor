@@ -1,0 +1,67 @@
+﻿@using FIcon = Blazorise.Icons.FontAwesome
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">LogProcessor</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="tracked">
+                <Icon Margin="Margin.Is2.FromRight" Style="font-size: 1.25rem;" Name="FIcon.FontAwesomeIcons.Heartbeat" IconStyle="IconStyle.Solid" /> Tracked Sessions
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link stack-container" href="deadlocked">
+                <Icon Class="stack-one stack-image" Margin="Margin.Is2.FromRight" Style="font-size: 1.25rem;" Name="FIcon.FontAwesomeIcons.Heart" IconStyle="IconStyle.Solid" />
+                <Icon Class="stack-two stack-image" Margin="Margin.Is2.FromRight" Style="font-size: .75rem;" Name="FIcon.FontAwesomeIcons.Lock" IconStyle="IconStyle.Solid" /> <div class="ml-4 pl-1"> Deadlocked Sessions</div>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="faulted">
+                <Icon Margin="Margin.Is2.FromRight" Style="font-size: 1.25rem;" Name="FIcon.FontAwesomeIcons.HeartBroken" IconStyle="IconStyle.Solid" /> Faulted Sessions
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="grammar">
+                <Icon Margin="Margin.Is2.FromRight" Style="font-size: 1.25rem;" Name="FIcon.FontAwesomeIcons.FileCode" IconStyle="IconStyle.Solid" /> Grammar
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="state-machine">
+                <Icon Margin="Margin.Is2.FromRight" Style="font-size: 1.25rem;" Name="FIcon.FontAwesomeIcons.FileCode" IconStyle="IconStyle.Solid" /> State Machine
+            </NavLink>
+        </li>
+    </ul>
+</div>
+<style scoped>
+    .stack-one {
+        z-index: 0;
+        color:white
+    }
+
+    .stack-two {
+        z-index: 1;
+        margin-left: .5rem;
+        margin-top: .25rem;
+        color:darkgray;
+    }
+
+    .stack-container {
+        position: relative;
+    }
+    .stack-image {
+        position: absolute;
+    }
+</style>
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

@@ -1,0 +1,197 @@
+{
+  "ServicesDefinitions": {
+    "BuyerGateway.Server": {
+      "ServiceId": "BuyerGateway.Server",
+      "StartState": "Awaiting",
+      "Transitions": [
+        {
+          "State": "Awaiting",
+          "NewState": "PostPlaceOrder",
+          "Message": "PlaceOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 0
+        },
+        {
+          "State": "PostPlaceOrder",
+          "NewState": "PostGetSKUDetails",
+          "Message": "GetSKUDetails",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "PostGetSKUDetails",
+          "NewState": "PostSKUDetails",
+          "Message": "SKUDetails",
+          "OpposingService": "InventoryService",
+          "Direction": 0
+        },
+        {
+          "State": "PostSKUDetails",
+          "NewState": "PostPlaceOrder_1",
+          "Message": "PlaceOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 1
+        },
+        {
+          "State": "PostPlaceOrder_1",
+          "NewState": "PostCancelOrder",
+          "Message": "CancelOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 0
+        },
+        {
+          "State": "PostCancelOrder",
+          "NewState": "Completed",
+          "Message": "CancelOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 1
+        },
+        {
+          "State": "PostPlaceOrder_1",
+          "NewState": "PostConfirmOrder",
+          "Message": "ConfirmOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 0
+        },
+        {
+          "State": "PostConfirmOrder",
+          "NewState": "PostVerifyCC",
+          "Message": "VerifyCC",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "PostVerifyCC",
+          "NewState": "PostInvalidCC",
+          "Message": "InvalidCC",
+          "OpposingService": "BankService",
+          "Direction": 0
+        },
+        {
+          "State": "PostInvalidCC",
+          "NewState": "PostPlaceOrder_1",
+          "Message": "ConfirmOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 1
+        },
+        {
+          "State": "PostVerifyCC",
+          "NewState": "PostValidCC",
+          "Message": "ValidCC",
+          "OpposingService": "BankService",
+          "Direction": 0
+        },
+        {
+          "State": "PostValidCC",
+          "NewState": "PostMakeCharge",
+          "Message": "MakeCharge",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "PostMakeCharge",
+          "NewState": "PostMakeOrder",
+          "Message": "MakeOrder",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "PostMakeOrder",
+          "NewState": "Completed",
+          "Message": "ConfirmOrder",
+          "OpposingService": "BuyerGateway.Client",
+          "Direction": 1
+        }
+      ]
+    },
+    "InventoryService": {
+      "ServiceId": "InventoryService",
+      "StartState": "Awaiting",
+      "Transitions": [
+        {
+          "State": "Awaiting",
+          "NewState": "MakeOrder",
+          "Message": "MakeOrder",
+          "OpposingService": "BuyerGateway.Server",
+          "Direction": 0
+        },
+        {
+          "State": "Awaiting",
+          "NewState": "FetchSKUDetails",
+          "Message": "GetSKUDetails",
+          "OpposingService": "BuyerGateway.Server",
+          "Direction": 0
+        },
+        {
+          "State": "FetchSKUDetails",
+          "NewState": "DetailsFetched",
+          "Message": "SKUDetails",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "MakeOrder",
+          "NewState": "OrderShipped",
+          "Message": "ShipOrder",
+          "OpposingService": "",
+          "Direction": 1
+        }
+      ]
+    },
+    "ShippingService": {
+      "ServiceId": "ShippingService",
+      "StartState": "Awaiting",
+      "Transitions": [
+        {
+          "State": "Awaiting",
+          "NewState": "OrderShipped",
+          "Message": "ShipOrder",
+          "OpposingService": "InventoryService",
+          "Direction": 0
+        }
+      ]
+    },
+    "BankService": {
+      "ServiceId": "BankService",
+      "StartState": "Awaiting",
+      "Transitions": [
+
+        {
+          "State": "Awaiting",
+          "NewState": "VerifyingCC",
+          "Message": "VerifyCC",
+          "OpposingService": "BuyerGateway.Server",
+          "Direction": 0
+        },
+        {
+          "State": "VerifyingCC",
+          "NewState": "CCVerified",
+          "Message": "ValidCC",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "CCVerified",
+          "NewState": "MakingCharge",
+          "Message": "MakeCharge",
+          "OpposingService": "BuyerGateway.Server",
+          "Direction": 0
+        },
+        {
+          "State": "MakingCharge",
+          "NewState": "ChargeMade",
+          "Message": "RealBankMakeCharge",
+          "OpposingService": "",
+          "Direction": 1
+        },
+        {
+          "State": "VerifyingCC",
+          "NewState": "Awaiting",
+          "Message": "InvalidCC",
+          "OpposingService": "",
+          "Direction": 1
+        }
+      ]
+    }
+  }
+}

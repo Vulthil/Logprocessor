@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec fluentd pkill -1 -x fluentd

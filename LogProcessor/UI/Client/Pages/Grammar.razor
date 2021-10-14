@@ -1,0 +1,407 @@
+﻿@page "/grammar/{Id:int?}"
+@using LogProcessor.Model.Utilities
+@using FIcon = Blazorise.Icons.FontAwesome
+
+<Modal @ref="_syntaxModal">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
+        <ModalHeader Class="modal-header-fancy">
+            <ModalTitle>Syntax of Session Types</ModalTitle>
+            <CloseButton></CloseButton>
+        </ModalHeader>
+        <ModalBody>
+            <CardDeck>
+                <Column ColumnSize="ColumnSize.Is6">
+                    <Card>
+                        <CardHeader>
+                            Local Type
+                        </CardHeader>
+                        <CardBody>
+                            p: q!hello.s?success.end
+                            <br />
+                            q: p?hello.µ(rec).s@@{ doStuff.rec, doOtherStuff.end }
+                            <br />
+                            s: µ(rec).q&{doStuff.rec, doOtherStuff.p!success.end}
+                        </CardBody>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            Global Type
+                        </CardHeader>
+                        <CardBody>
+                            B1->S:s(string) .
+                            S->B1:b1(int) .
+                            S->B2:b2(int) .
+                            B1->B2:bi2(int) .
+                            B2->S:{
+                            ok . B2->S:s(string) . S->B2:b2(string) . end,
+                            quit . end
+                            }
+                        </CardBody>
+                    </Card>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is6">
+                    <Card>
+                        <CardHeader>
+                            Operators and keywords
+                        </CardHeader>
+                        <CardBody>
+                            Operators: &, !, ?, @@, &#x2295;, &#x2A01;, (+), ->, &#x03BC;, &#x00B5;
+                            <br />
+                            Keywords: end
+                        </CardBody>
+                    </Card>
+                </Column>
+            </CardDeck>
+        </ModalBody>
+    </ModalContent>
+</Modal>
+<Modal @ref="_modalRef">
+    @if (_chosenSessionType != null)
+    {
+        <ModalContent Centered="true" Size="ModalSize.Large">
+            <ModalHeader Class="modal-header-fancy">
+                <ModalTitle>
+                    <Row>
+                        <Column Float="Float.Left">
+                            @_chosenSessionType.Name
+                        </Column>
+                        <Column Float="Float.Right">
+                            <Button Type="ButtonType.Button" Color="Color.Primary" Clicked="ShowStateMachines" Float="Float.Right">
+                                <Icon Name="IconName.Key" Margin="Margin.Is2.FromRight"></Icon> Show Statemachines
+                            </Button>
+                        </Column>
+                    </Row>
+                </ModalTitle>
+                <CloseButton></CloseButton>
+            </ModalHeader>
+            <ModalBody>
+                <CardDeck>
+                    <Card>
+                        <CardHeader>@nameof(SessionType.InternalParticipants).ToFriendlyCase()</CardHeader>
+                        <CardBody>
+                            @if (_chosenSessionType.InternalParticipants == null || !_chosenSessionType.InternalParticipants.Any())
+                            {
+                                <p><em>No internal participants registered</em></p>
+                            }
+                            else
+                            {
+                                <ListGroup>
+                                    <Repeater Items="@_chosenSessionType.InternalParticipants">
+                                        <ListGroupItem> @context</ListGroupItem>
+                                    </Repeater>
+                                </ListGroup>
+
+                            }
+                        </CardBody>
+                    </Card>
+                    <Card>
+                        <CardHeader>@nameof(SessionType.ExternalParticipants).ToFriendlyCase()</CardHeader>
+                        <CardBody>
+                            @if (_chosenSessionType.ExternalParticipants == null || !_chosenSessionType.ExternalParticipants.Any())
+                            {
+                                <p><em>No external participants registered</em></p>
+                            }
+                            else
+                            {
+                                <ListGroup>
+                                    <Repeater Items="@_chosenSessionType.ExternalParticipants">
+                                        <ListGroupItem> @context</ListGroupItem>
+                                    </Repeater>
+                                </ListGroup>
+                            }
+                        </CardBody>
+                    </Card>
+                </CardDeck>
+            </ModalBody>
+        </ModalContent>
+    }
+</Modal>
+<Modal @ref="_stateMachinesModal">
+    @if (_chosen != null)
+    {
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
+        <ModalHeader Class="modal-header-fancy">
+            <CloseButton></CloseButton>
+        </ModalHeader>
+        <ModalBody Style="min-height: 30vh; height: 75vh; overflow-y: auto">
+            <Tabs @bind-SelectedTab="@selectedService">
+                <Items>
+                    <Repeater Items="_chosen" Context="service">
+                        <Tab Name="@service.ServiceName">@service.ServiceName</Tab>
+                    </Repeater>
+                </Items>
+                <Content>
+                <Repeater Items="_chosen" Context="service">
+                    <TabPanel Name="@service.ServiceName">
+                        @service.MarkupString
+                    </TabPanel>
+                </Repeater>
+                </Content>
+            </Tabs>
+        </ModalBody>
+    </ModalContent>
+
+    }
+</Modal>
+<Card Style="max-height: 100%">
+    <CardHeader>
+        <Row>
+            <Column>
+                <Heading Size="HeadingSize.Is1">
+                    @(Id.HasValue && _chosenSessionType != null ? $"Editing: {_chosenSessionType.Name}" : "Grammar")
+                </Heading>
+            </Column>
+            <Column>
+                <Buttons Float="Float.Right" Role="ButtonsRole.Toolbar">
+                    <Buttons Margin="Margin.Is2.FromRight">
+                        <Button Type="ButtonType.Button" Color="Color.Primary"
+                                Clicked="RefreshList">
+                            <Icon Name="IconName.Sync">Refresh</Icon>
+                        </Button>
+                    </Buttons>
+                    <Buttons>
+                        @if (manage)
+                        {
+                            <Button Type="ButtonType.Button" Color="Color.Secondary" Clicked="_syntaxModal.Show">
+                                <Icon Name="IconName.QuestionCircle" IconStyle="IconStyle.Solid"></Icon>
+                            </Button>
+                        }
+                        <Button Type="ButtonType.Button" Color="Color.Primary" Clicked="ChangeManage">
+                            @if (manage)
+                            {
+                                <Icon Name="IconName.ChevronLeft" IconStyle="IconStyle.Solid"></Icon>
+                            }
+                            else
+                            {
+                                <Icon Name="FIcon.FontAwesomeIcons.Plus" IconStyle="IconStyle.Solid"></Icon>
+                            }
+                            &nbsp; @(manage ? "Back" : "New")
+                        </Button>
+                    </Buttons>
+                </Buttons>
+            </Column>
+        </Row>
+    </CardHeader>
+
+    <CardBody>
+        @if (!manage)
+        {
+
+            <Table Hoverable="true">
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell>@nameof(SessionType.Name)</TableHeaderCell>
+                        <TableHeaderCell>Is Active</TableHeaderCell>
+                        <TableHeaderCell></TableHeaderCell>
+                    </TableRow>
+
+                </TableHeader>
+                <TableBody>
+                    @if (!ServerStatus.IsOnline)
+                    {
+                        <TableRow>
+                            <TableRowCell ColumnSpan="3">
+                                <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                                    No connection to the server could be made.<br />
+                                    Try refreshing on the button in the top right.
+                                </Paragraph>
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                    else if (_sessionTypes == null)
+                    {
+                        <TableRow>
+                            <TableRowCell ColumnSpan="3">
+                                <Loading />
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                    else if (!_sessionTypes.Any())
+                    {
+                        <TableRow>
+                            <TableRowCell ColumnSpan="3">
+                                <Paragraph Italic="true" Alignment="TextAlignment.Center">
+                                    No session types have been uploaded.
+                                </Paragraph>
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                    else
+                    {
+                        <Repeater Items="@_sessionTypes" TItem="SessionType" Context="sessionType">
+                            <TableRow Clicked="(e) => ShowModal(sessionType)" HoverCursor="Cursor.Pointer">
+                                <TableRowHeader>@sessionType.Name</TableRowHeader>
+                                <TableRowCell>@sessionType.ShouldLoad</TableRowCell>
+                                <TableRowCell>
+                                    <Dropdown @onclick:stopPropagation="true">
+                                        <DropdownToggle Color="Color.Primary">
+                                            <Icon Name="FIcon.FontAwesomeIcons.Cog" IconStyle="IconStyle.Solid"></Icon>
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            <DropdownItem Clicked="() => ChangeLoadedStatus(sessionType)">@(sessionType.ShouldLoad ? "Disable" : "Enable")</DropdownItem>
+                                            <DropdownDivider />
+                                            <DropdownItem Clicked="() => Edit(sessionType)">Edit</DropdownItem>
+                                            <DropdownDivider />
+                                            <DropdownItem Clicked="() => RemoveSession(sessionType)">Remove</DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                </TableRowCell>
+                            </TableRow>
+                        </Repeater>
+                    }
+                </TableBody>
+            </Table>
+        }
+        else
+        {
+
+            @*<Column ColumnSize="ColumnSize.Is8" Margin="Margin.Is0" Padding="Padding.Is0">*@
+            <Tabs SelectedTab="@selectedTab" SelectedTabChanged="OnSelectedTabChanged" Margin="Margin.Is2.FromBottom" Style="max-height: 85vh">
+                <Items>
+                    <Tab Name="text">Text</Tab>
+                    <Tab Name="file">File</Tab>
+                </Items>
+                <Content>
+                    <TabPanel Name="text">
+                        <CardDeck>
+                            <Column ColumnSize="ColumnSize.Is8.OnDesktop.IsFull" Margin="Margin.Is0" Padding="Padding.Is0">
+                                <Card>
+                                    <CardBody>
+                                        <Form>
+                                            <Validations @ref="validations" Model="_model" ValidateOnLoad="false">
+                                                <Validation>
+                                                    <Field>
+                                                        <FieldLabel>Name of type</FieldLabel>
+                                                        <TextEdit @bind-Text="@_model.SessionTypeName">
+                                                            <Feedback>
+                                                                <ValidationError />
+                                                            </Feedback>
+                                                        </TextEdit>
+                                                    </Field>
+                                                </Validation>
+                                                <Validation Validator="@CompileText">
+                                                    <Field>
+                                                        <FieldLabel>Type here</FieldLabel>
+                                                        <MemoEdit @bind-Text="@_model.InputText" Rows="15">
+                                                            <Feedback>
+                                                                <ValidationError />
+                                                            </Feedback>
+                                                        </MemoEdit>
+                                                    </Field>
+                                                </Validation>
+                                                @if (!string.IsNullOrWhiteSpace(_model.OutputText))
+                                                {
+                                                    <Field>
+                                                        <FieldLabel>Errors</FieldLabel>
+                                                        <MemoEdit @bind-Text="@_model.OutputText" ReadOnly="true"></MemoEdit>
+                                                    </Field>
+                                                }
+
+                                                <Button Clicked="UploadText" Type="ButtonType.Button" Color="Color.Primary">@( Id.HasValue ? "Edit" : "Upload") </Button>
+                                            </Validations>
+                                        </Form>
+                                    </CardBody>
+                                </Card>
+                            </Column>
+                            <Column ColumnSize="ColumnSize.Is4.OnDesktop.IsFull" Margin="Margin.Is0.OnDesktop.Is2.FromTop" Padding="Padding.Is0">
+                                <Card>
+                                    <CardHeader>
+                                        Found services
+                                    </CardHeader>
+                                    <CardBody>
+                                        @if (foundServices != null && foundServices.Any())
+                                        {
+                                            <CheckBoxList Data="@foundServices"
+                                                          TextField="@((item) => item)"
+                                                          ValueField="@((item) => item)"
+                                                          SelectedValues="@_model.ExternalServices"
+                                                          DisabledValues="@externalServices" />
+
+                                        }
+                                        else
+                                        {
+                                            <p><em>No found services. Try inputting some text.</em></p>
+                                        }
+                                    </CardBody>
+                                    <CardFooter>
+                                        N.B.: Check the services which are external
+                                    </CardFooter>
+                                </Card>
+                            </Column>
+
+                        </CardDeck>
+                    </TabPanel>
+                    <TabPanel Name="file">
+                        <CardDeck>
+                            <Column ColumnSize="ColumnSize.Is8" Margin="Margin.Is0" Padding="Padding.Is0">
+                                <Card>
+                                    <CardBody>
+                                        <Form>
+                                            <Validations @ref="fileValidations" Model="_model" ValidateOnLoad="false">
+                                                <Validation>
+                                                    <Field>
+                                                        <FieldLabel>Name of type</FieldLabel>
+                                                        <TextEdit @bind-Text="@_model.SessionTypeName">
+                                                            <Feedback>
+                                                                <ValidationError />
+                                                            </Feedback>
+                                                        </TextEdit>
+                                                    </Field>
+                                                </Validation>
+
+                                                <Field>
+                                                    <FieldLabel>Upload file</FieldLabel>
+                                                    <FileEdit @ref="@fileEdit" Changed="@OnChanged" AutoReset="false">
+                                                        <Feedback>
+                                                            <ValidationError />
+                                                        </Feedback>
+                                                    </FileEdit>
+                                                </Field>
+                                                @if (!string.IsNullOrWhiteSpace(_model.OutputText))
+                                                {
+                                                    <Field>
+                                                        <FieldLabel>Errors</FieldLabel>
+                                                        <MemoEdit @bind-Text="@_model.OutputText" ReadOnly="true"></MemoEdit>
+                                                    </Field>
+                                                }
+
+                                                <Button Clicked="UploadFile" Type="ButtonType.Button" Color="Color.Primary">Upload</Button>
+                                            </Validations>
+                                        </Form>
+                                    </CardBody>
+                                </Card>
+                            </Column>
+
+                            <Column ColumnSize="ColumnSize.Is4" Margin="Margin.Is0" Padding="Padding.Is0">
+                                <Card>
+                                    <CardHeader>
+                                        Found services
+                                    </CardHeader>
+                                    <CardBody>
+                                        @if (foundServices != null && foundServices.Any())
+                                        {
+                                            <CheckBoxList Data="@foundServices"
+                                                          TextField="@((item) => item)"
+                                                          ValueField="@((item) => item)"
+                                                          SelectedValues="@_model.ExternalServices"
+                                                          DisabledValues="@externalServices" />
+
+                                        }
+                                        else
+                                        {
+                                            <p><em>No found services. Try uploading a file.</em></p>
+                                        }
+                                    </CardBody>
+                                    <CardFooter>
+                                        N.B.: Check the services which are external
+                                    </CardFooter>
+                                </Card>
+                            </Column>
+                        </CardDeck>
+                    </TabPanel>
+                </Content>
+            </Tabs>
+        }
+    </CardBody>
+</Card>
+

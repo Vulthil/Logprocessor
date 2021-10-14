@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Services.Shared\Services.Shared.csproj" />
+    <ProjectReference Include="..\Automata\Automata.csproj" />
+  </ItemGroup>
+
+</Project>

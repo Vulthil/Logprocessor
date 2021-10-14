@@ -1,0 +1,14 @@
+﻿@page "/"
+
+<h1>Hello, world!</h1>
+
+Welcome to your new LogProcessor.
+
+<Vᅳfor Items="stonks" Context="item">
+    <div>@item</div>
+</Vᅳfor>
+
+@code{
+    IEnumerable<int> stonks { get; set; } = new[]{ 1, 2, 3 };
+}
+

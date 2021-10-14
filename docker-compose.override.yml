@@ -1,0 +1,59 @@
+version: '3.4'
+
+services:
+  inventoryservice:
+    image: ${DOCKER_REGISTRY-}inventoryservice:dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      #- ASPNETCORE_URLS=https://+:443;http://+:80
+      - ElasticConfiguration__Uri=http://elasticsearch:9200
+    #ports:
+      #- "59816:80"
+      #- "44398:443"
+ 
+  shippingservice:
+    image: ${DOCKER_REGISTRY-}shippingservice:dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      #- ASPNETCORE_URLS=https://+:443;http://+:80
+      - ElasticConfiguration__Uri=http://elasticsearch:9200
+      #- LogConfig__ShouldLog=false
+    #ports:
+      #- "59872:80"
+      #- "44363:443"
+
+  bankservice:
+    image: ${DOCKER_REGISTRY-}bankservice:dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      #- ASPNETCORE_URLS=https://+:443;http://+:80
+      - ElasticConfiguration__Uri=http://elasticsearch:9200
+    #ports:
+      #- "59905:80"
+      #- "44373:443"
+  logprocessor:
+    image: ${DOCKER_REGISTRY-}logprocessor:dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      #- ASPNETCORE_URLS=https://+:443;http://+:80
+      - ElasticConfiguration__Uri=http://elasticsearch:9200
+      - ConnectionStrings__Default=User ID=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Host=${POSTGRES_HOST};Port=5432;Database=${POSTGRES_DB};
+
+  buyergateway.server:
+    image: ${DOCKER_REGISTRY-}buyergatewayserver:dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "41646:80"
+
+
+  ui.server:
+    image: ${DOCKER_REGISTRY-}uiserver:dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80

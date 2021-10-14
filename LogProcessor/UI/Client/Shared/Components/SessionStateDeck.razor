@@ -1,0 +1,22 @@
+﻿<CardDeck>
+    @if (State.Sent.Any(x => x.Count > 0) || State.Received.Any(x => x.Count > 0))
+    {
+           <MessageBalanceCard Messages="State.Sent" HeaderText="Sent, but not received" EmptyText="All sent messages have been received">
+           </MessageBalanceCard>
+           <MessageBalanceCard Messages="State.Received" HeaderText="Received, but not sent" EmptyText="All received messages have been sent">
+           </MessageBalanceCard>
+    }
+    else
+    {
+    <Card>
+        <CardHeader>Messages</CardHeader>
+        <CardBody>
+            <p style="color:lightslategray"><i>Messages are balanced</i></p>
+        </CardBody>
+    </Card>
+    }
+</CardDeck>
+@code {
+    [Parameter]
+    public SessionStateDto State { get; set; }
+}

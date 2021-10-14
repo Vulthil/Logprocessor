@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<NoWarn>3021;1701;1702</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="session.lt" />
+		<None Remove="SessionTypesLexer.g4" />
+		<None Remove="SessionTypesParser.g4" />
+		<None Remove="test.lt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Antlr4 Include="SessionTypesParser.g4">
+			<Package>SessionTypes.Grammar.Generated</Package>
+			<AntOutDir>Generated</AntOutDir>
+			<Error>true</Error>
+		</Antlr4>
+		<Antlr4 Include="SessionTypesLexer.g4">
+			<Package>SessionTypes.Grammar.Generated</Package>
+			<AntOutDir>Generated</AntOutDir>
+			<Error>true</Error>
+		</Antlr4>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="test.lt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="session.lt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.2" />
+		<PackageReference Include="Antlr4BuildTasks" Version="8.14.0">
+			<!--<PrivateAssets>all</PrivateAssets>-->
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\LogProcessor.Model\LogProcessor.Model.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="GlobalTree\" />
+	</ItemGroup>
+
+</Project>
