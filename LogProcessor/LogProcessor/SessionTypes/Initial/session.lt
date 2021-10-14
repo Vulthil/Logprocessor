@@ -15,7 +15,3 @@ BankService: BuyerGateway.Server?VerifyCC.BuyerGateway.Server @{
 	InvalidCC.end,
 	ValidCC.BuyerGateway.Server?MakeCharge.RealBank!RealBankMakeCharge.end
 	}
-
-jens: alex!hej.alex?halloej.end
-
-alex: µ(stonks).jens?hej.stonks

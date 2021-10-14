@@ -33,8 +33,13 @@ In order to run the sample
   * [http://localhost:5000/swagger](http://localhost:5000/swagger)
 * Microservice Gateway
   * If you want to "act" as a client invoking requests on the microservice system
-  * Remember to copy the 'X-SessionID' header from the initial request to the next request (or not, depending on scenario) 
-    * [http://localhost:41646/swagger](http://localhost:41646/swagger)
+  * Remember to copy the 'X-Session-ID' header from the initial request to the next request (or not, depending on scenario) 
+    * [http://localhost:41646/swagger/index.html](http://localhost:41646/swagger/index.html)
+	  * If it says "Sorry there's nothing at this address, try doing a Ctrl+Shift+R
 * PGAdmin
   * [http://localhost:8080](http://localhost:8080)
     * Only works if values for default email and password have been defined in the .env file
+	
+	
+Kibana
+first time use button from ui to kibana, create index pattern of 'fluentd-*' with timestamp field '@timestamp'
