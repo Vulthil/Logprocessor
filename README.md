@@ -9,7 +9,7 @@
     ```
 * Make a copy of .env.example (in repo root) and rename it to .env
 * Put in the values for the environment variables.
-	* The defaults are unless you have a running, conflicting Docker configuration.
+	* The defaults are fine unless you have a running, conflicting Docker configuration.
 	* The PGAdmin Docker container will be usable if you have supply values for email and password in the .env file, but it is not required for the Logprocessor to run
 
 You can now either
