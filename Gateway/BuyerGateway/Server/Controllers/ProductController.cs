@@ -33,7 +33,7 @@ namespace BuyerGateway.Server.Controllers
             var response = await _sender.Request<GetSKUDetails, SKUDetails>(_skuDetailsRequestClient, new
             {
                 Amount = 2,
-                SKU = "Yeet1337"
+                SKU = "2021SKU001"
             });
             return Ok(response.Message);
         }
