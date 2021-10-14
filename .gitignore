@@ -5,6 +5,7 @@
 
 # Custom
 **/Generated/
+!**/Client/Generated/
 *.csv
 **/csv/*
 **/appsettings.*.json

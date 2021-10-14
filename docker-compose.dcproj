@@ -24,8 +24,6 @@
     <None Include=".dockerignore" />
     <None Include="ReloadFluentd" />
     <None Include="RunAll" />
-    <None Include="RunAll_Infra" />
-    <None Include="StopAll_Infra" />
     <None Include="StopAll" />
   </ItemGroup>
   <ItemGroup>
